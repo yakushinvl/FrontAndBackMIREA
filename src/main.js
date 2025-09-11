@@ -1,13 +1,43 @@
+document.addEventListener('DOMContentLoaded', function() {
+console.log('DOM загружен, ищем элементы...');
+
 const dlg = document.getElementById('contactDialog');
 const openBtn = document.getElementById('openDialog');
 const closeBtn = document.getElementById('closeDialog');
 const form = document.getElementById('contactForm');
+
+// Проверяем, что элементы найдены
+if (!dlg) console.error('Элемент contactDialog не найден');
+if (!openBtn) console.error('Элемент openDialog не найден');
+if (!closeBtn) console.error('Элемент closeDialog не найден');
+if (!form) console.error('Элемент contactForm не найден');
+
 let lastActive = null;
+
+// Обработчик открытия модалки
 openBtn.addEventListener('click', () => {
+    console.log('Кнопка открытия нажата');
     lastActive = document.activeElement;
-    dlg.showModal();                               // модальный режим + затемнение
-    dlg.querySelector('input,select,textarea,button')?.focus();
+
+    // Проверяем поддержку showModal
+    if (typeof dlg.showModal === "function") {
+        dlg.showModal();
+        console.log('Модальное окно открыто');
+    } else {
+        console.error('Метод showModal не поддерживается');
+        // Альтернатива для браузеров без поддержки dialog
+        dlg.setAttribute('open', '');
+        dlg.style.display = 'block';
+    }
+
+    // Фокусируемся на первом поле формы
+    const firstField = dlg.querySelector('input, select, textarea, button');
+    if (firstField) {
+        firstField.focus();
+    }
 });
+
+
 closeBtn.addEventListener('click', () => dlg.close('cancel'));
 form?.addEventListener('submit', (e) => {
 // валидация см. 1.4.2; при успехе закрываем окно
